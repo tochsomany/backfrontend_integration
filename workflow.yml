@@ -1,0 +1,49 @@
+version: "1.1"
+name: Status Check
+env:
+  host: localhost:3000/books
+config:
+  loadTest:
+    phases:
+      - duration: 10
+        arrivalRate: 100
+tests:
+  Books:
+    name: Get all Books
+    steps:
+      - name: GET all Book request
+        http:
+          url: http://${{env.host}}
+          method: GET
+          check:
+            status: /^20/
+  CreateBook:
+    name: Create a Book
+    steps:
+      - name: Create Book request
+        http:
+          url: http://${{env.host}}
+          method: POST
+          headers:
+            Content-Type: application/json
+          json:
+            title: ${{ person.jobType | fake }},
+            author: ${{ person.jobType | fake }},
+            page: ${{ number.int | fake }}
+          check:
+            status: /^20/
+  VerifyNaughtyBook:
+    name: Naughty a Book
+    steps:
+      - name: Naughty Book request
+        http:
+          url: http://${{env.host}}
+          method: POST
+          headers:
+            Content-Type: application/json
+          json:
+            title: ${{ | naughtystring }},
+            author: ${{ | naughtystring }},
+            page: ${{ | naughtystring }}
+          check:
+            status: /^50/
